@@ -3,11 +3,15 @@
 This change log covers changes to the docker image and does not include
 [changes to the micromamba program](https://github.com/mamba-org/mamba/blob/main/CHANGELOG.md).
 
+## 12 Sept 2023
+
+- Restore documentation that was accidently lost in transition to readthedocs.io
+
 ## 5 September 2023
 
+- Updated to micromamba version 1.5.1
 - Added `/usr/local/bin/_apptainer_shell.sh` for use with
   `apptainer shell -shell /usr/local/bin/_apptainer_shell.sh ...`
-
 - Added FAQ on use with `apptainer`/`singularity`
 
 ## 24 August 2023

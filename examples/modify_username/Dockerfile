@@ -1,4 +1,4 @@
-FROM mambaorg/micromamba:1.5.0
+FROM mambaorg/micromamba:1.5.1
 ARG NEW_MAMBA_USER=new-username
 ARG NEW_MAMBA_USER_ID=57440
 ARG NEW_MAMBA_USER_GID=57440
@@ -6,7 +6,7 @@ USER root
 
 RUN if grep -q '^ID=alpine$' /etc/os-release; then \
       # alpine does not have usermod/groupmod
-      apk add --no-cache --virtual temp-packages shadow=4.13-r0; \
+      apk add --no-cache --virtual temp-packages shadow; \
     fi && \
     usermod "--login=${NEW_MAMBA_USER}" "--home=/home/${NEW_MAMBA_USER}" \
         --move-home "-u ${NEW_MAMBA_USER_ID}" "${MAMBA_USER}" && \
