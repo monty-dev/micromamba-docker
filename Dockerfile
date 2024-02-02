@@ -1,23 +1,24 @@
-ARG BASE_IMAGE=debian:bookworm-slim
+ARG BASE_IMAGE=oraclelinux:8       
 
 # Mutli-stage build to keep final image small. Otherwise end up with
 # curl and openssl installed
 FROM --platform=$BUILDPLATFORM $BASE_IMAGE AS stage1
 ARG VERSION=1.5.6
+RUN dnf install -y bzip2 curl bash epel-release microdnf  https://rpms.remirepo.net/enterprise/remi-release-8.rpm
 
 # hadolint ignore=DL3018
-RUN if grep -q '^ID=alpine$' /etc/os-release; then \
-       apk add --no-cache \
-         bash \
-         bzip2 \
-         curl; \
-    else \
-      apt-get update && apt-get install -y --no-install-recommends \
-        bzip2 \
-        ca-certificates \
-        curl \
-      && rm -rf /var/lib/apt /var/lib/dpkg /var/lib/cache /var/lib/log; \
-   fi
+# RUN if grep -q '^ID=alpine$' /etc/os-release; then \
+#        apk add --no-cache \
+#          bash \
+#          bzip2 \
+#          curl; \
+#     else \
+#       apt-get update && apt-get install -y --no-install-recommends \
+#         bzip2 \
+#         ca-certificates \
+#         curl \
+#       && rm -rf /var/lib/apt /var/lib/dpkg /var/lib/cache /var/lib/log; \
+#    fi
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG TARGETARCH
 RUN test "$TARGETARCH" = 'amd64' && export ARCH='64'; \
@@ -33,11 +34,11 @@ ENV ENV_NAME="base"
 ENV MAMBA_ROOT_PREFIX="/opt/conda"
 ENV MAMBA_EXE="/bin/micromamba"
 
-COPY --from=stage1 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+# COPY --from=stage1 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=stage1 /tmp/bin/micromamba "$MAMBA_EXE"
 
 # hadolint ignore=DL3018
-RUN { grep -q '^ID=alpine$' /etc/os-release && apk add --no-cache bash; } || true
+# RUN { grep -q '^ID=alpine$' /etc/os-release && apk add --no-cache bash; } || true
 
 ARG MAMBA_USER=mambauser
 ARG MAMBA_USER_ID=57439
